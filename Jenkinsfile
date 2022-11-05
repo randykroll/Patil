@@ -5,6 +5,13 @@ pipeline{
         maven 'maven'
     }
 
+    environment{
+       ArtifactId = readMavenPom().getArtifactId()
+       Version = readMavenPom().getVersion()
+       Name = readMavenPom().getName()
+       GroupId = readMavenPom().getGroupId()
+    }
+
     stages {
         // Specify various stage with in stages
 
@@ -23,20 +30,37 @@ pipeline{
             }
         }
 
-        // Stage3 : Publish to Nexus
+
+        // Stage3 : Publish the artifacts to Nexus
         stage ('Publish to Nexus'){
             steps {
-                echo ' Source code published to Sonarqube for SCA......'
-                nexusArtifactUploader artifacts: [[artifactId: 'VinayDevOpsLab', classifier: '', file: 'target/VinayDevOpsLab-0.0.4-SNAPSHOT.war', type: 'war']], credentialsId: '63bfdc12-a8b4-41bb-97b8-bc317a998c48', groupId: 'com.vinaysdevopslab', nexusUrl: '172.20.10.82:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'VinaysDevOpsLab-SNAPSHOT', version: '0.0.4-SNAPSHOT'
-                //withSonarQubeEnv('sonarqube'){ // You can override the credential to be used
-                  //   sh 'mvn sonar:sonar'
-                //}
+                script {
 
+                    def NexusRepo = Version.endsWith("SNAPSHOT") ? "VinaysDevOpsLab-SNAPSHOT" : "VinaysDevOpsLab-Release"
+
+                    nexusArtifactUploader artifacts: 
+                    [[artifactId: "${ArtifactId}", 
+                        classifier: '', 
+                        file: "target/${ArtifactId}-${Version}.war", 
+                        type: 'war']],
+                    credentialsId: '63bfdc12-a8b4-41bb-97b8-bc317a998c48', 
+                    groupId: "${GroupId}", 
+                    nexusUrl: '172.20.10.82:8081', 
+                    nexusVersion: 'nexus3', 
+                    protocol: 'http', 
+                    repository: "${NexusRepo}", 
+                    version: "${Version}"   
+                }
             }
         }
-
-        
-        
+                // Stage 4 : Print some information
+        stage ('Print Environment variables'){
+            steps {
+                echo "Artifact ID is '${ArtifactId}'"
+                echo "Version is '${Version}'"
+                echo "GroupID is '${GroupId}'"
+                echo "Name is '${Name}'"
+            }
+        } 
     }
-
 }
