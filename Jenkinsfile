@@ -32,18 +32,23 @@ pipeline{
         // Stage3 : Publish to Nexus
         stage ('Publish to Nexus'){
             steps {
-                echo ' Publish to Nexus......'
-                nexusArtifactUploader artifacts: [[artifactId: "${ArtifactId}", 
-                classifier: '', 
-                file: 'target/VinayDevOpsLab-0.0.5-SNAPSHOT.war', 
-                type: 'war']], 
-                credentialsId: '63bfdc12-a8b4-41bb-97b8-bc317a998c48', 
-                groupId: "${GroupId}", 
-                nexusUrl: '172.20.10.82:8081', 
-                nexusVersion: 'nexus3', 
-                protocol: 'http', 
-                repository: 'VinaysDevOpsLab-SNAPSHOT', 
-                version: "${Version}"
+                script {
+
+                    def NexusRepo = Version.endsWith("SNAPSHOT") ? "VinaysDevOpsLab-SNAPSHOT" : "VinaysDevOpsLab-Release"
+
+                    echo ' Publish to Nexus......'
+                    nexusArtifactUploader artifacts: [[artifactId: "${ArtifactId}", 
+                    classifier: '', 
+                    file: 'target/VinayDevOpsLab-0.0.5-SNAPSHOT.war', 
+                    type: 'war']], 
+                    credentialsId: '63bfdc12-a8b4-41bb-97b8-bc317a998c48', 
+                    groupId: "${GroupId}", 
+                    nexusUrl: '172.20.10.82:8081', 
+                    nexusVersion: 'nexus3', 
+                    protocol: 'http', 
+                    repository: "${NexusRepo}", 
+                    version: "${Version}"
+                }
             }
         }
         // Stage 4 : Print some information
