@@ -39,7 +39,7 @@ pipeline{
                     echo ' Publish to Nexus......'
                     nexusArtifactUploader artifacts: [[artifactId: "${ArtifactId}", 
                     classifier: '', 
-                    file: 'target/VinayDevOpsLab-0.0.5-SNAPSHOT.war', 
+                    file: "target/${ArtifactID}-${Version}.war", 
                     type: 'war']], 
                     credentialsId: '63bfdc12-a8b4-41bb-97b8-bc317a998c48', 
                     groupId: "${GroupId}", 
