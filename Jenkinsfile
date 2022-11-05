@@ -49,6 +49,8 @@ pipeline{
                         echo "Version is '${Version}'"
                         echo "GroupID is '${GroupId}'"
                         echo "Name is '${Name}'"
+                    }
+        }
         
     }
 
