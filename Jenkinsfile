@@ -61,7 +61,7 @@ pipeline{
                     }
                 }
         // Stage 5: Deploying
-        stage ('Deploy'){
+        stage ('Deploy to Tomcat'){
             steps {
                 echo "Deploying...."
                 sshPublisher(publishers: 
